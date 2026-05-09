@@ -1,8 +1,15 @@
+'use client'
 import React from 'react';
-import { Button, Table } from "@heroui/react";
+import { AlertDialog, Button, Table } from "@heroui/react";
 import Link from 'next/link';
 
-const UsersTable = ({ users }) => {
+
+const UsersTable = ({ users, deleteUserAction }) => {
+
+    const handleDelete = async(userId) =>{
+        await deleteUserAction(userId);
+    }
+
     return (
         <div>
             <Table className="w-full border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -32,25 +39,56 @@ const UsersTable = ({ users }) => {
 
                             {
                                 users.map(user => <Table.Row key={user._id} className="border-t hover:bg-gray-50 transition">
-                                <Table.Cell className="px-4 py-3 font-medium text-gray-900">
-                                    {user.name}
-                                </Table.Cell>
-                                <Table.Cell className="px-4 py-3 text-black">{user.email}</Table.Cell>
-                                <Table.Cell className="px-4 py-3">
-                                    <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
-                                        {user.role}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell className="px-4 py-3 text-blue-600">
-                                    <Link href={`/user/${user._id}`}><Button variant='outline'>Details</Button></Link>
+                                    <Table.Cell className="px-4 py-3 font-medium text-gray-900">
+                                        {user.name}
+                                    </Table.Cell>
+                                    <Table.Cell className="px-4 py-3 text-black">{user.email}</Table.Cell>
+                                    <Table.Cell className="px-4 py-3">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                                            {user.role}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell className="px-4 py-3 text-blue-600">
+                                        <Link href={`/users/${user._id}`}>
+                                            <Button variant='outline'>Details</Button>
+                                        </Link>
 
-                                    <Link href={`/user/${user._id}`}><Button variant='outline'>Edit</Button></Link>
-                                    <Link href={`/user/${user._id}`}><Button variant='danger'>Details</Button></Link>
-                                </Table.Cell>
-                            </Table.Row>)
+                                        <Link href={`/users/${user._id}/edit`}>
+                                            <Button variant='outline'>Edit</Button>
+                                        </Link>
+                                        <AlertDialog>
+                                            <Button variant="danger">Delete </Button>
+                                            <AlertDialog.Backdrop>
+                                                <AlertDialog.Container>
+                                                    <AlertDialog.Dialog className="sm:max-w-[400px]">
+                                                        <AlertDialog.CloseTrigger />
+                                                        <AlertDialog.Header>
+                                                            <AlertDialog.Icon status="danger" />
+                                                            <AlertDialog.Heading>Delete User permanently?</AlertDialog.Heading>
+                                                        </AlertDialog.Header>
+                                                        <AlertDialog.Body>
+                                                            <p>
+                                                                This will permanently delete <strong>{user.name}</strong> and all of its
+                                                                data. This action cannot be undone.
+                                                            </p>
+                                                        </AlertDialog.Body>
+                                                        <AlertDialog.Footer>
+                                                            <Button slot="close" variant="tertiary">
+                                                                Cancel
+                                                            </Button>
+                                                            <Button onClick={() => handleDelete(user._id)} slot="close" variant="danger">
+                                                              Confirm Delete
+                                                            </Button>
+                                                        </AlertDialog.Footer>
+                                                    </AlertDialog.Dialog>
+                                                </AlertDialog.Container>
+                                            </AlertDialog.Backdrop>
+                                        </AlertDialog>
+                                    </Table.Cell>
+                                </Table.Row>)
                             }
 
-                            
+
 
 
                         </Table.Body>
