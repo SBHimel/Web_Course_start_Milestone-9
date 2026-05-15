@@ -1,8 +1,25 @@
+'use client'
+
+import { authClient } from '@/lib/auth-client';
+import { Avatar, Button } from '@heroui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
 const Navbar = () => {
+    const {
+        data: session,
+    } = authClient.useSession()
+
+    const user = session?.user
+    console.log(user);
+
+    // logout er jonno
+    const handleSignOut = async () => {
+        await authClient.signOut();
+        // window.location.href = "/login";
+    };
+
 
     const navLinks = (
         <>
@@ -73,19 +90,37 @@ const Navbar = () => {
                             Profile
                         </Link>
 
-                        <Link
-                            href={'/login'}
-                            className='px-5 py-2 rounded-xl hover:bg-gray-100 transition text-gray-700'
-                        >
-                            Login
-                        </Link>
+                        {user ? <>
+                            <li><Avatar>
+                                <Avatar.Image referrerPolicy='no-referrer' alt="John Doe" src={user?.image} />
+                                <Avatar.Fallback>j</Avatar.Fallback>
+                            </Avatar></li>
+                            <li>
+                                <Button onClick={handleSignOut}
+                                    className="rounded-none px-5 py-2 font-medium text-red-600 
+  bg-red-50 border border-red-200 
+  hover:bg-red-100 hover:border-red-300 
+  transition"
+                                >
+                                    Logout
+                                </Button>
+                            </li>
 
-                        <Link
-                            href={'/signup'}
-                            className='px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold shadow-lg hover:scale-105 transition'
-                        >
-                            Sign Up
-                        </Link>
+                        </> : <>
+                            <Link
+                                href={'/login'}
+                                className='px-5 py-2 rounded-xl hover:bg-gray-100 transition text-gray-700'
+                            >
+                                Login
+                            </Link>
+
+                            <Link
+                                href={'/signup'}
+                                className='px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold shadow-lg hover:scale-105 transition'
+                            >
+                                Sign Up
+                            </Link>
+                        </>}
                     </div>
 
                 </div>
