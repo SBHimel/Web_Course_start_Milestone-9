@@ -51,7 +51,7 @@ async function run() {
       res.json(result);
     });
 
-    // data update kore kivabe
+    // data Edit ba update kore kivabe
 
     app.patch("/destination/:id", async (req, res) => {
       const { id } = req.params;

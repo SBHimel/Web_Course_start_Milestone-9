@@ -24,10 +24,10 @@ const AddDestinationPage = () => {
 
         console.log(data);
 
-         if (data.insertedId) {
-        toast.success('Destination Added Successfully!');
-        e.target.reset();
-    }
+        if (data.insertedId) {
+            toast.success('Destination Added Successfully!');
+            e.target.reset();
+        }
     };
 
     return (
