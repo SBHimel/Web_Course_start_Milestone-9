@@ -16,17 +16,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${Josefin}  h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <Toaster />
-        <Navbar></Navbar>
-        {children}
-        <Footer></Footer>
+    <html lang="en" className={`${Josefin} h-full antialiased`}>
+  <body className="min-h-full flex flex-col">
 
-      </body>
-    </html>
+    <Toaster />
+    <Navbar />
+    {children}
+    <Footer />
+
+  </body>
+</html>
   );
 }

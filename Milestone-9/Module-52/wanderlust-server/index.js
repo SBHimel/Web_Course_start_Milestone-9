@@ -41,13 +41,42 @@ async function run() {
     });
 
     // Backend এ GET by ID লাগবে
-    app.get("/destination/:id", async (req, res) =>{
-        const {id} = req.params
+    app.get("/destination/:id", async (req, res) => {
+      const { id } = req.params;
 
-        const result = await destinationCollection.findOne({_id: new ObjectId(id)})
+      const result = await destinationCollection.findOne({
+        _id: new ObjectId(id),
+      });
 
-        res.json(result)
-    })
+      res.json(result);
+    });
+
+    // data update kore kivabe
+
+    app.patch("/destination/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const updatedData = req.body;
+
+      const result = await destinationCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updatedData },
+      );
+
+      res.json(result);
+    });
+
+    // Data delete korte
+
+    app.delete("/destination/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await destinationCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
+      res.json(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(

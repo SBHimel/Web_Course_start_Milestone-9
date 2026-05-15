@@ -1,17 +1,30 @@
+import { DeleteAlert } from "@/components/DeleteAlert";
+import { EditModal } from "@/components/EditModal";
+import { Button } from "@heroui/react";
+import { Edit } from "lucide-react";
 
 
-const DestinationDetailsPage = async({params}) => {
-    const {id} = await params
-    const res = await fetch(`http://localhost:5000/destination/${id}`)
-    const destination = await res.json()
 
-    console.log(destination);
-    
+const DestinationDetailsPage = async ({ params }) => {
+  const { id } = await params
+  const res = await fetch(`http://localhost:5000/destination/${id}`)
+  const destination = await res.json()
 
-    return (
-       <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10">
+  console.log(destination);
+
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-10">
+
+
 
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
+
+      <div className="flex items-center gap-3 justify-end mt-5 mb-6">
+        <EditModal destination={destination}></EditModal>
+      <DeleteAlert destination={destination}></DeleteAlert>
+      </div>
+    
 
         {/* IMAGE SECTION */}
         <div className="relative">
@@ -91,7 +104,7 @@ const DestinationDetailsPage = async({params}) => {
         </div>
       </div>
     </div>
-    );
+  );
 };
 
 export default DestinationDetailsPage;
