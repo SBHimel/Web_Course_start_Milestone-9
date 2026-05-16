@@ -24,6 +24,7 @@ async function run() {
 
     const db = client.db("wanderlust");
     const destinationCollection = db.collection("destinations");
+    const bookingColloection = db.collection("bookings")
 
     // 👉 POST = server এ data পাঠানো
     app.post("/destination", async (req, res) => {
@@ -33,6 +34,13 @@ async function run() {
 
       res.json(result);
     });
+
+    app.post('/booking', async(req, res)=>{
+      const bookingData = req.body;
+      const result = await bookingColloection.insertOne(bookingData)
+
+      res.json(result)
+    })
 
     // 👉 GET = server থেকে data আনা
     app.get("/destination", async (req, res) => {
@@ -77,6 +85,9 @@ async function run() {
 
       res.json(result);
     });
+
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log(

@@ -1,3 +1,4 @@
+import BookingCard from "@/components/BookingCard";
 import { DeleteAlert } from "@/components/DeleteAlert";
 import { EditModal } from "@/components/EditModal";
 import { Button } from "@heroui/react";
@@ -95,10 +96,15 @@ const DestinationDetailsPage = async ({ params }) => {
           </div>
 
           {/* BOOK BUTTON */}
-          <div className="pt-6">
+          <div className="flex justify-between items-center">
+            <div className="pt-6">
             <button className="w-full md:w-auto px-10 py-4 bg-black text-white rounded-2xl font-semibold hover:bg-gray-800 transition duration-300 shadow-lg">
               Book This Destination
             </button>
+          </div>
+          <div>
+            <BookingCard destination={destination}></BookingCard>
+          </div>
           </div>
 
         </div>
