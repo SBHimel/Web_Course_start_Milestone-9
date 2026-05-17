@@ -12,7 +12,7 @@ const Navbar = () => {
     } = authClient.useSession()
 
     const user = session?.user
-    console.log(user);
+    // console.log(user);
 
     // logout er jonno
     const handleSignOut = async () => {
@@ -26,7 +26,7 @@ const Navbar = () => {
             {[
                 { name: "Home", href: "/" },
                 { name: "Destinations", href: "/destinations" },
-                { name: "My Booking", href: "/my-booking" },
+                { name: "My Booking", href: "/my-bookings" },
                 { name: "Add Destination", href: "/add-destination" },
             ].map((item, i) => (
                 <li key={i}>

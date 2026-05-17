@@ -24,7 +24,7 @@ async function run() {
 
     const db = client.db("wanderlust");
     const destinationCollection = db.collection("destinations");
-    const bookingColloection = db.collection("bookings")
+    const bookingColloection = db.collection("bookings");
 
     // 👉 POST = server এ data পাঠানো
     app.post("/destination", async (req, res) => {
@@ -35,21 +35,20 @@ async function run() {
       res.json(result);
     });
 
-    app.post('/booking', async(req, res)=>{
-      const bookingData = req.body;
-      const result = await bookingColloection.insertOne(bookingData)
-
-      res.json(result)
-    })
-
     // 👉 GET = server থেকে data আনা
     app.get("/destination", async (req, res) => {
       const result = await destinationCollection.find().toArray();
       res.json(result);
     });
 
+    // Middleware 52-2 module e
     // Backend এ GET by ID লাগবে
-    app.get("/destination/:id", async (req, res) => {
+    app.get("/destination/:id", (req, res, next)=>{
+      const header = req.headers.authorization
+      console.log(header);
+        next()
+
+    }, async (req, res) => {
       const { id } = req.params;
 
       const result = await destinationCollection.findOne({
@@ -58,6 +57,9 @@ async function run() {
 
       res.json(result);
     });
+
+    
+
 
     // data Edit ba update kore kivabe
 
@@ -86,8 +88,35 @@ async function run() {
       res.json(result);
     });
 
+    // Create booking card and send POST API
 
+    app.post("/booking", async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingColloection.insertOne(bookingData);
 
+      res.json(result);
+    });
+
+    // ekhon booking data ke ana
+
+    app.get("/bookings/:userId", async (req, res) => {
+      const { userId } = req.params;
+
+      const result = await bookingColloection.find({ userId }).toArray();
+
+      res.json(result);
+    });
+
+    // cancel click korle delete hbe ei api toiri kora
+    app.delete("/booking/:bookingId", async (req, res) => {
+      const { bookingId } = req.params;
+
+      const result = await bookingColloection.deleteOne({
+        _id: new ObjectId(bookingId),
+      });
+
+      res.json(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
