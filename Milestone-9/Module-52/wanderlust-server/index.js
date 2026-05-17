@@ -2,6 +2,7 @@ const express = require("express");
 const dontenv = require("dotenv");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 dontenv.config();
 const uri = process.env.MONGODB_URI;
 
@@ -18,16 +19,48 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+// veryfy korte 
+const JWKS = createRemoteJWKSet(
+  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
+)
+
+// Middleware 54-2 theke 54-5 module e
+const verifyToken = async(req, res, next)=>{
+  const authHeader = req?.headers.authorization
+  if(!authHeader){
+    return res.status(401).json({ message:
+      "Unauthorized"
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+  if(!token){
+    return res.status(401).json({message: "Unauthorized"});
+  }
+
+  try {
+    const {payload} = await jwtVerify(token, JWKS)
+  console.log(payload);
+  next()
+
+  } catch (error) {
+    return res.status(403).json({message: "Forbidden"});
+  }
+
+}
+
+
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db("wanderlust");
     const destinationCollection = db.collection("destinations");
     const bookingColloection = db.collection("bookings");
 
     // 👉 POST = server এ data পাঠানো
-    app.post("/destination", async (req, res) => {
+    app.post("/destination",verifyToken, async (req, res) => {
       const destinationData = req.body;
       console.log(destinationData);
       const result = await destinationCollection.insertOne(destinationData);
@@ -41,14 +74,9 @@ async function run() {
       res.json(result);
     });
 
-    // Middleware 52-2 module e
+    
     // Backend এ GET by ID লাগবে
-    app.get("/destination/:id", (req, res, next)=>{
-      const header = req.headers.authorization
-      console.log(header);
-        next()
-
-    }, async (req, res) => {
+    app.get("/destination/:id", verifyToken, async (req, res) => {
       const { id } = req.params;
 
       const result = await destinationCollection.findOne({
@@ -63,7 +91,7 @@ async function run() {
 
     // data Edit ba update kore kivabe
 
-    app.patch("/destination/:id", async (req, res) => {
+    app.patch("/destination/:id",verifyToken, async (req, res) => {
       const { id } = req.params;
 
       const updatedData = req.body;
@@ -78,7 +106,7 @@ async function run() {
 
     // Data delete korte
 
-    app.delete("/destination/:id", async (req, res) => {
+    app.delete("/destination/:id",verifyToken, async (req, res) => {
       const { id } = req.params;
 
       const result = await destinationCollection.deleteOne({
@@ -90,7 +118,7 @@ async function run() {
 
     // Create booking card and send POST API
 
-    app.post("/booking", async (req, res) => {
+    app.post("/booking", verifyToken, async (req, res) => {
       const bookingData = req.body;
       const result = await bookingColloection.insertOne(bookingData);
 
@@ -108,7 +136,7 @@ async function run() {
     });
 
     // cancel click korle delete hbe ei api toiri kora
-    app.delete("/booking/:bookingId", async (req, res) => {
+    app.delete("/booking/:bookingId",verifyToken, async (req, res) => {
       const { bookingId } = req.params;
 
       const result = await bookingColloection.deleteOne({
@@ -118,7 +146,7 @@ async function run() {
       res.json(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
     );

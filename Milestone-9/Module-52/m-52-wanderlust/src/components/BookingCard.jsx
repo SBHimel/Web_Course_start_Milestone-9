@@ -37,11 +37,14 @@ const BookingCard = ({ destination }) => {
         }
         console.log(bookingData);
 
+        const {data:tokenData} = await authClient.token()
+        console.log(tokenData);
 
-        const res = await fetch('http://localhost:5000/booking', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/booking`, {
             method: 'POST',
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                authorization: `Bearer ${tokenData?.token}`
             },
             body: JSON.stringify(bookingData)
 
@@ -123,7 +126,7 @@ const BookingCard = ({ destination }) => {
             </div>
 
             {/* BUTTON */}
-            <Link href="/destinations">
+            
                 <Button onClick={handleBooking}
                     className="
       w-full rounded-2xl
@@ -139,7 +142,7 @@ const BookingCard = ({ destination }) => {
                 >
                     ✈️ Book Now
                 </Button>
-            </Link>
+        
 
         </Card>
     );
