@@ -59,6 +59,12 @@ async function run() {
     const destinationCollection = db.collection("destinations");
     const bookingColloection = db.collection("bookings");
 
+    // Features
+    app.get("/features", async (req, res)=>{
+      const result = await destinationCollection.find().limit(4).toArray()
+      res.json(result)
+    })
+
     // 👉 POST = server এ data পাঠানো
     app.post("/destination",verifyToken, async (req, res) => {
       const destinationData = req.body;
